@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print Diamond</title>
+</head>
+
+<body>
+
+    <h1>Print diamond</h1>
+    <script type="text/javascript">
+        const drawDiamond = (paraM) => {
+
+            // Top
+            for (let i = 0; i < paraM - i; i++) {
+
+                let starInARow = "";
+
+                for (let j = paraM; j > i; j--) {
+                    starInARow += " ";
+                }
+
+                for (let k = 0; k <= i; k++) {
+                    starInARow += "*";
+                }
+
+                for (let l = 1; l <= i; l++) {
+                    starInARow += "*";
+                }
+
+                console.log(starInARow);
+            }
+
+
+            // Bottom
+            let initialStart = paraM - 3;
+            let initialDiff = initialStart * 0.5;
+            let finalDiff = 3 + initialDiff;
+
+            for (let i = paraM - finalDiff; i >= 0; i--) {
+
+                let starInARow = "";
+
+                for (let j = paraM; j > i; j--) {
+                    starInARow += " ";
+                }
+
+                for (let k = 0; k <= i; k++) {
+                    starInARow += "*";
+                }
+
+                for (let l = 1; l <= i; l++) {
+                    starInARow += "*";
+                }
+
+                console.log(starInARow);
+            }
+        }
+
+        const runLogic = (number) => {
+
+            const input = Number.isInteger(number) === true && number > 1 && number % 2 !== 0 ? drawDiamond(
+                number) : console.log("error");
+
+        };
+
+        runLogic(9);
+    </script>
+</body>
+
+</html>

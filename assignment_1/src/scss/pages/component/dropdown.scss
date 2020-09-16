@@ -1,0 +1,36 @@
+.dropdown-default {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: white;
+    border: 1px solid $light-grey;
+    border-radius: 0;
+    color: grey;
+    padding: 8px 20px;
+    margin: 10px 0;
+    font-size: 14px;
+    min-width: 200px;
+
+    &:hover {
+        text-decoration: none;
+        color: black;
+        @include transition(color .4s ease);
+    }
+}
+
+.dropdown-menu {
+    width: 100%;
+    li {
+        font-size: 16px;
+        text-transform: capitalize;
+        padding: 10px 20px;
+        &:hover {
+            background-color: $light-grey;
+            @include transition(background-color .2s ease);
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+    }
+}

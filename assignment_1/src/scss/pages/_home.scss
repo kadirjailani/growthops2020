@@ -1,0 +1,51 @@
+.top-nav {
+    padding: 100px 0;
+
+    .title {
+        color: $choc;
+    }
+}
+
+.user-list {
+    border-top: 1px solid $light-grey;
+    margin: 40px 0 0 0;
+    padding: 40px 0;
+}
+
+.user-card {
+    padding: 40px 20px;
+
+    .profile-image {
+        width: 30%;
+
+        img {
+            width: 70%;
+            margin: 0 auto;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+
+            @include media-breakpoint-between(md, lg) {
+                width: 80%;
+            }
+
+            @include media-breakpoint-only(xs) {
+                width: 88%;
+            }
+        }
+    }
+
+    .details {
+        ul {
+            list-style-type: none;
+
+            li {
+                font-size: 14px;
+
+                h4 {
+                    text-transform: uppercase;
+                }
+            }
+        }
+    }
+}
