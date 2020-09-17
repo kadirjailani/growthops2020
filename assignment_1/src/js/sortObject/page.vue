@@ -1,158 +1,148 @@
 <template>
   <div>
+    <div>
+      <p>Filtered by Age</p>
+      <ul class="nav nav-pills" role="tablist">
+        <!-- Filter dropdown 1 -->
+        <li role="presentation" class="dropdown">
+          <a
+            href="#"
+            class="dropdown-toggle dropdown-default"
+            id="filter-1"
+            data-toggle="dropdown"
+            role="button"
+            aria-haspopup="true"
+            aria-expanded="false"
+          >
+            {{ currentFilter }}
+            <span class="drop-icon caret"></span>
+          </a>
+          <ul class="dropdown-menu" id="menu-1" aria-labelledby="drop">
+            <li v-for="item in dropDownList" v-bind:key="item.index">
+              <button v-on:click="filterSelect(item)">{{ item }}</button>
+            </li>
+          </ul>
+        </li>
+      </ul>
 
+      <div class="row user-list">
+        <div
+          v-for="person in currentData"
+          v-bind:key="person.id"
+          class="col-12 col-md-6 col-lg-6 col-xl-4"
+        >
+          <div class="d-flex user-card">
+            <div class="profile-image">
+              <img v-bind:src="imageIcon" />
+            </div>
+            <div class="details">
+              <ul>
+                <li>
+                  <h4>{{ person.name }}</h4>
+                </li>
+                <li>
+                  Email: <strong>{{ person.email }}</strong>
+                </li>
+                <li>
+                  Mobile: <strong>{{ person.phone }}</strong>
+                </li>
+                <li>
+                  Company: <strong>{{ person.company }}</strong>
+                </li>
+                <li>
+                  Address: <strong>{{ person.address.suite }}, {{ person.address.street }}, {{ person.address.zipcode }} {{ person.address.city }}</strong>
+                </li>
+                <li>
+                  Website: <strong>{{ person.website }}</strong>
+                </li>
+                <li>
+                  Age: <strong>{{ person.age }}</strong>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </template>
 
 <script>
+import icon from "../../img/icon_male.png";
+
 export default {
   components: {},
   data() {
     return {
-      bitIcon: bitcoinIcon,
-      currentData: {
-        todayPrice: 0,
-        thisMonthvalue: [],
-        thisMonthDate: [],
-      },
+      imageIcon: icon,
+      currentFilter: "All",
+      dropDownList: ["All", "20 and below", "21 to 39", "Above 40"],
+      currentData: [],
       fetchedData: [],
-      dataLoaded: true,
-      gdp: [
-        { country: "USA", value: 20.5 },
-        { country: "China", value: 13.4 },
-        { country: "Germany", value: 4.0 },
-        { country: "Japan", value: 4.9 },
-        { country: "France", value: 2.8 },
-      ],
+      errorMessage: ""
     };
   },
   methods: {
-    fecthData: function () {
-      Promise.all([
-        fetch("https://api.coindesk.com/v1/bpi/currentprice/MYR.json"),
-        fetch(
-          "https://api.coindesk.com/v1/bpi/historical/close.json?index=[MYR]"
-        ),
-      ])
-        .then(function (responses) {
-          // Get a JSON object from each of the responses
-          return Promise.all(
-            responses.map(function (response) {
-              return response.json();
-            })
-          );
-        })
-        .then((data) => {
-          // Log the data to the console
-          // You would do something with both sets of data here
-          // console.log(data);
-          this.fetchedData = data;
-
-          // const string = data[0].bpi.MYR.rate;
-
-          // console.log(finalString, firstString, secondString)
-          // this.processTodayPrice(data);
-          this.processTodayPrice();
-          this.processMonthData();
-        })
-        .catch(function (error) {
-          // if there's an error, log it
-          console.log(error);
-        });
+    fetchLoad: async function () {
+      try{
+        let response = await fetch(
+          `http://www.mocky.io/v2/5d73bf3d3300003733081869`
+        );
+        let data = await response.json();
+        this.fetchedData = data;
+        this.currentData = data;
+      } catch (error) {
+        this.errorMessage = error.message;
+      }
     },
-    processTodayPrice: function () {
-      const price = this.fetchedData[0].bpi.MYR.rate;
-      const splitPrice = price.split(".", 2);
-      const firstString = splitPrice[0];
-      const secondString = splitPrice[1].slice(0, 2);
-      this.currentData.todayPrice = firstString + "." + secondString;
-    },
-    processMonthData: function () {
-      this.currentData.thisMonth = this.fetchedData[1].bpi;
+    filterSelect: function (item) {
+      switch (item) {
+        case "20 and below":
+          this.filterUnder20();
+          this.sortListing();
+          break;
+        case "21 to 39":
+          this.filter21To39();
+          this.sortListing();
+          break;
+        case "Above 40":
+          this.filterAbove40();
+          this.sortListing();
+          break;
+        case "All":
+          this.filterShowAll();
+          break;
+      }
 
-      const data = this.currentData.thisMonth;
-      this.thisMonthvalue = Object.keys(data).map(function (key) {
-        return data[key];
+      this.currentFilter = item;
+    },
+    filterShowAll: function () {
+      this.currentData = this.fetchedData;
+    },
+    filterUnder20: function () {
+      this.currentData = this.fetchedData.filter((el) => {
+        return el.age <= 20;
       });
-
-      // this.processPriceDiffFromYesterday(data);
-
-      console.log(this.currentData.thisMonthvalue);
     },
-    processPriceDiffFromYesterday: function (param) {
-      const todaysPoint = param[param.length - 1];
-      const yesterdaysPoint = param[param.length - 2];
-      console.log(param);
+    filter21To39: function () {
+      this.currentData = this.fetchedData.filter((el) => {
+        return el.age >= 21 && el.age < 40;
+      });
     },
-    // dataHere: async function (urlLink) {
-    //   const url = "https://api.coindesk.com/v1/bpi/historical/close.json";
-    //   const myHeaders = new Headers();
-    //   myHeaders.append("Content-Type", "application/json");
-    //   myHeaders.append("Access-Control-Allow-Origin", "*");
-
-    //   let raw = JSON.stringify({
-    //     type: this.selected,
-    //     price: this.finalPrice,
-    //     startDate: this.startDate,
-    //     endDate: this.endDate,
-    //     subscribeDate: this.selectedDateToSubs,
-    //   });
-
-    //   let requestOptions = {
-    //     method: "GET",
-    //     // headers: myHeaders,
-    //     // body: raw,
-    //     // redirect: "follow",
-    //   };
-
-    //   await fetch(`${url}`, requestOptions)
-    //     .then((response) => response.json())
-    //     .then((data) => {
-    //       this.dataGet = data.bpi;
-    //       this.processDateAndValue();
-    //     })
-    //     .catch((error) => console.log(error));
-
-    //   // console.log(raw);
-    //   this.dataLoaded = true;
-    // },
-    // processDateAndValue: function () {
-    //   let obj = this.dataGet;
-
-    //   let date = Object.keys(obj);
-    //   this.chartData.labels = date;
-
-    //   let value = Object.values(obj);
-    //   this.chartData.datasets.data = value;
-
-    //   console.log(this.dataLoaded);
-
-    //   //   console.log(
-    //   //     this.chartData.labels,
-    //   //     this.chartData.datasets.data,
-    //   //     this.chartData
-    //   //   );
-    // },
-    changeThisData: function () {
-      let data = this.gdp[0].value;
-
-      // for(let i = 0; i < this.gdp.length; i++) {
-      //   this.gdp[i].value = this.gdp[i].value + 1;
-      // }
-
-      this.gdp[0].value = 2.8;
-      this.gdp[1].value = 2.8;
-      this.gdp[2].value = 2.8;
-      this.gdp[3].value = 2.8;
-      this.gdp[4].value = 2.8;
-
-      console.log(data);
+    filterAbove40: function () {
+      this.currentData = this.fetchedData.filter((el) => {
+        return el.age >= 41;
+      });
+    },
+    sortListing: function () {
+      this.currentData.sort((a, b) => {
+        return a.age - b.age;
+      });
     },
   },
   mounted() {
-    // this.getData();
-    // this.changeThisData();
-    this.fecthData();
+    this.fetchLoad();
   },
 };
 </script>

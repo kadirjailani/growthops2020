@@ -29,7 +29,14 @@
             @include transition(background-color .2s ease);
         }
 
-        a:hover {
+        button {
+            background-color: transparent;
+            border: 0;
+            box-shadow: 0;
+            width: 100%;
+            text-align: left;
+        }
+        button:hover {
             text-decoration: none;
         }
     }
